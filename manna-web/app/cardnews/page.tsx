@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // Figma Dev Mode에서 제공된 원격 자산 URL들
@@ -104,11 +104,31 @@ export default function CardNewsPage() {
   );
 
   const router = useRouter();
+
+  // 스캔(사진 촬영/업로드) 관련 상태 및 ref
+  const [scanSheetOpen, setScanSheetOpen] = useState(false);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
+  const galleryInputRef = useRef<HTMLInputElement | null>(null);
+
   const handleTabClick = (label: string) => {
     if (label === "홈") router.push("/main");
     if (label === "카드뉴스") router.push("/cardnews");
     if (label === "챌린지") router.push("/challenge");
-    // TODO: 스캔/챌린지/내 프로필 라우팅은 필요 시 추가
+    if (label === "스캔") {
+      // 업로드/촬영 선택 바텀시트 오픈
+      setScanSheetOpen(true);
+      return;
+    }
+    // TODO: 내 프로필 라우팅은 필요 시 추가
+  };
+
+  // 파일 선택 공통 처리 (향후 업로드/분석 로직 연결 지점)
+  const handleFileSelected = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    // 현재는 선택만 처리하고 시트 닫기. 추후 분석/미리보기/라우팅 추가 가능
+    console.log("selected file:", file.name, file.type, file.size);
+    setScanSheetOpen(false);
   };
 
   return (
@@ -195,6 +215,54 @@ export default function CardNewsPage() {
             </button>
           ))}
         </div>
+
+        {/* 숨겨진 파일 입력들과 스캔 바텀시트 */}
+        {/* 카메라 촬영 전용 입력 */}
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={(e) => handleFileSelected(e.currentTarget.files)}
+        />
+        {/* 갤러리 선택 전용 입력 */}
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => handleFileSelected(e.currentTarget.files)}
+        />
+
+        {scanSheetOpen && (
+          <div className="absolute inset-0 z-30 bg-black/40 backdrop-blur-sm flex items-end" onClick={() => setScanSheetOpen(false)}>
+            <div className="w-full bg-white rounded-t-2xl p-4 space-y-3" onClick={(e) => e.stopPropagation()}>
+              <div className="w-10 h-1.5 bg-[#E3E5E5] rounded-full mx-auto mb-1" />
+              <button
+                type="button"
+                className="w-full h-12 rounded-xl bg-[#E86339] text-white text-sm font-semibold"
+                onClick={() => cameraInputRef.current?.click()}
+              >
+                카메라로 촬영
+              </button>
+              <button
+                type="button"
+                className="w-full h-12 rounded-xl border border-[#E0E2E7] text-sm font-semibold"
+                onClick={() => galleryInputRef.current?.click()}
+              >
+                갤러리에서 선택
+              </button>
+              <button
+                type="button"
+                className="w-full h-12 rounded-xl bg-white text-[#71727a] text-sm"
+                onClick={() => setScanSheetOpen(false)}
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
