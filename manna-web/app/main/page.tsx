@@ -1,6 +1,15 @@
 "use client";
 
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+
 export default function MainPage() {
+  const router = useRouter();
+  const handleClick = useCallback((label: string) => {
+    if (label === "카드뉴스") router.push("/cardnews");
+    // 다른 탭은 향후 라우팅 추가 가능
+  }, [router]);
+
   // 로컬 이미지 경로만 사용 (폴백 제거)
   const FEED_IMG = "/assets/main/feed.png";
   const THUMBS = [
@@ -63,8 +72,7 @@ export default function MainPage() {
           <div className="h-[406px] w-full rounded-[15px] overflow-hidden bg-[#e8e9f1] flex items-center justify-center">
             {/* 이미지 엘리먼트는 항상 시도하되, 404 시 브라우저가 표시하지 않음 */}
             <img src={FEED_IMG} alt="홈 피드" className="w-full h-full object-cover" onError={(e) => { (e.currentTarget.style.display = 'none'); }} />
-            {/* 로컬 이미지 없을 때 문구 */}
-            <span className="absolute text-[#71727a] text-[12px]">/public/assets/main/feed.png 를 추가하세요</span>
+            {/* 로컬 이미지 부재 시 별도 문구 제거 (디자이너 요청) */}
           </div>
         </div>
 
@@ -93,7 +101,7 @@ export default function MainPage() {
                 {src ? (
                   <img src={src} alt={`스캔 썸네일 ${i + 1}`} className="w-full h-full object-cover" onError={(e) => { (e.currentTarget.style.display = 'none'); }} />
                 ) : null}
-                {!src ? null : <span className="absolute text-[#71727a] text-[10px]">{src.replace('/assets/main/', '')}</span>}
+                {/* 썸네일 아래 파일명 표시 제거 (디자이너 요청) */}
               </div>
             ))}
           </div>
@@ -108,10 +116,16 @@ export default function MainPage() {
             { label: "챌린지", icon: ICONS.challenge },
             { label: "내 프로필", icon: ICONS.profile },
           ].map((t) => (
-            <div key={t.label} className="flex-1 flex flex-col items-center gap-2">
+            <button
+              key={t.label}
+              type="button"
+              onClick={() => handleClick(t.label)}
+              className="flex-1 flex flex-col items-center gap-2"
+              aria-pressed={!!t.active}
+            >
               <Icon src={t.icon} color={t.active ? "#e86339" : "#d4d6dd"} size={20} />
               <p className={`${t.active ? "text-[#1f2024] font-semibold" : "text-[#71727a]"} text-[10px] leading-[14px]`}>{t.label}</p>
-            </div>
+            </button>
           ))}
         </div>
       </div>

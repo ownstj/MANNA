@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const OPTIONS = [
   { key: "milk", label: "우유 알레르기" },
@@ -14,16 +15,17 @@ const OPTIONS = [
 ];
 
 export default function AllergyPage() {
+  const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
-  const toggle = (key: string) => {
+  const toggle = useCallback((key: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
       return next;
     });
-  };
+  }, []);
 
   const hasSelection = selected.size > 0;
 
@@ -33,7 +35,18 @@ export default function AllergyPage() {
         {/* 상태바 */}
         <div className="h-[44px]" />
 
-        <div className="absolute left-0 right-0 top-[43.88px] p-6 flex flex-col gap-10">
+        <div className="absolute left-0 right-0 top-[43.88px] p-6 flex flex-col gap-6">
+          {/* top-right 시작하기 버튼 (Figma와 동일) */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => router.push("/")}
+              className="text-[14px] font-medium text-[#71727a] hover:underline"
+            >
+              시작하기
+            </button>
+          </div>
+
           {/* Progress bar (끝까지 진행) */}
           <div className="w-full h-2 rounded-[4px] bg-[#e8e9f1]">
             <div className="h-full bg-[#e86339] rounded-[8px] w-full" />
@@ -79,14 +92,14 @@ export default function AllergyPage() {
             disabled={!hasSelection}
             onClick={() => {
               if (!hasSelection) return;
-              window.location.href = "/main";
+              router.push("/home/start");
             }}
             className={[
               "w-full h-12 rounded-[12px] flex items-center justify-center text-[12px] font-semibold",
               !hasSelection ? "bg-[#ec6439]/50 cursor-not-allowed" : "bg-[#ec6439] text-white",
             ].join(" ")}
           >
-            끝내기
+            다음으로
           </button>
         </div>
       </div>
