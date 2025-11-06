@@ -141,10 +141,10 @@ export default function CardNewsPage() {
       // 마무리
       setProgress(100);
       setIsAnalyzing(false);
-      // 프리뷰 정리
-      URL.revokeObjectURL(url);
-      // 다음 페이지로 이동 (가정: 홈으로 이동). 필요 시 목적지 수정 가능
-      router.push("/home");
+      // 프리뷰 정리는 결과 페이지에서 돌아올 수 있으니 살짝 지연
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      // 결과 페이지로 이동 (Figma 1316-1596 참고)
+      router.push("/home/analysis");
     }, 2400);
   };
 
