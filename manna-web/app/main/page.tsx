@@ -7,6 +7,7 @@ export default function MainPage() {
   const router = useRouter();
   const handleClick = useCallback((label: string) => {
     if (label === "카드뉴스") router.push("/cardnews");
+    if (label === "챌린지") router.push("/challenge");
     // 다른 탭은 향후 라우팅 추가 가능
   }, [router]);
 

@@ -107,6 +107,7 @@ export default function CardNewsPage() {
   const handleTabClick = (label: string) => {
     if (label === "홈") router.push("/main");
     if (label === "카드뉴스") router.push("/cardnews");
+    if (label === "챌린지") router.push("/challenge");
     // TODO: 스캔/챌린지/내 프로필 라우팅은 필요 시 추가
   };
 
@@ -114,43 +115,39 @@ export default function CardNewsPage() {
     <div className="min-h-screen w-full bg-white flex items-center justify-center">
       <div className="relative h-[812px] w-[375px] bg-white text-[#1f2024] md:rounded-2xl md:shadow-md overflow-hidden" data-node-id="1312:5000" data-name="Search results">
         <div className="flex flex-col h-full">
-          {/* 상단 영역: 상태바 + 네비 + 칩 바 */}
+          {/* 상단 영역: 네비만 고정 */}
           <div className="shrink-0">
-            {/* iOS Status Bar */}
-            <div className="h-[44px] backdrop-blur-[20px] bg-white" />
-
-            {/* Nav Bar */}
-            <div className="h-[40px] bg-white relative">
+            {/* Nav Bar - 최상단 고정 */}
+            <div className="h-[40px] bg-white sticky top-0 z-10">
               <p className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-[14px] font-bold text-[#1f2024]">카드 뉴스</p>
               <Link href="/main" aria-label="뒤로" className="absolute left-[24px] top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center">
                 <MaskIcon src={ICON_ARROW_LEFT} color={COLOR_ACCENT} size={20} />
               </Link>
             </div>
-
-            {/* 정렬/필터 칩 바 */}
-            <div className="px-4">
-              <div className="flex items-center justify-between h-[36px]">
-                <button type="button" className="h-[36px] px-3 rounded-[12px] border border-[#c5c6cc] flex items-center gap-3">
-                  <span className="flex items-center gap-2">
-                    <MaskIcon src={ICON_FILTER} size={12} color="#8f9098" />
-                    <span className="text-[12px] tracking-[0.12px] text-[#1f2024]">정렬</span>
-                  </span>
-                  <MaskIcon src={ICON_CHEVRON_DOWN} size={10} color={COLOR_ACCENT} />
-                </button>
-
-                <button type="button" className="h-[36px] px-3 rounded-[12px] border border-[#c5c6cc] flex items-center gap-3">
-                  <span className="flex items-center gap-2">
-                    <MaskIcon src={ICON_FILTER} size={12} color={COLOR_ACCENT} />
-                    <span className="text-[12px] tracking-[0.12px] text-[#1f2024]">필터</span>
-                  </span>
-                  <span className="size-5 rounded-[20px] bg-[color:var(--accent,#e86339)] text-white text-[10px] font-semibold flex items-center justify-center">2</span>
-                </button>
-              </div>
-            </div>
           </div>
 
-          {/* 본문: 카드 그리드 */}
+          {/* 본문: 칩 바 + 카드 그리드 (스크롤 영역) */}
           <div className="flex-1 overflow-auto px-4 pt-3 pb-[120px]">
+            {/* 정렬/필터 칩 바 (스크롤됨) */}
+            <div className="mb-3 flex items-center justify-between h-[36px]">
+              <button type="button" className="h-[36px] px-3 rounded-[12px] border border-[#c5c6cc] flex items-center gap-3">
+                <span className="flex items-center gap-2">
+                  <MaskIcon src={ICON_FILTER} size={12} color="#8f9098" />
+                  <span className="text-[12px] tracking-[0.12px] text-[#1f2024]">정렬</span>
+                </span>
+                <MaskIcon src={ICON_CHEVRON_DOWN} size={10} color={COLOR_ACCENT} />
+              </button>
+
+              <button type="button" className="h-[36px] px-3 rounded-[12px] border border-[#c5c6cc] flex items-center gap-3">
+                <span className="flex items-center gap-2">
+                  <MaskIcon src={ICON_FILTER} size={12} color={COLOR_ACCENT} />
+                  <span className="text-[12px] tracking-[0.12px] text-[#1f2024]">필터</span>
+                </span>
+                <span className="size-5 rounded-[20px] bg-[color:var(--accent,#e86339)] text-white text-[10px] font-semibold flex items-center justify-center">2</span>
+              </button>
+            </div>
+
+            {/* 카드 그리드 */}
             <div className="grid grid-cols-2 gap-3">
               {cards.map((c) => (
                 <Link key={c.id} href={`/cardnews/${c.id}`} className="bg-[#f8f9fe] rounded-[16px] overflow-hidden flex flex-col">
