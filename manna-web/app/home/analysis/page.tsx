@@ -3,6 +3,23 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+// 피그마 '맵기' 아이콘(고추) 에셋 URL
+const PEPPER_ICON = "http://localhost:3845/assets/8560450999ac9c9e01c8fcb0e2b84b8616228363.png";
+
+// 하트 아이콘 SVG (Outlined)
+function HeartIcon({ size = 20, color = "#2f3036" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 6.01 4.01 4 6.5 4C8.24 4 9.91 4.81 11 6.09C12.09 4.81 13.76 4 15.5 4C17.99 4 20 6.01 20 8.5C20 12.28 16.6 15.36 11.45 20.04L12 21.35Z"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function Star({ filled = false }: { filled?: boolean }) {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
@@ -148,10 +165,10 @@ export default function AnalysisResultPage() {
 
           {/* 상세 영역 */}
           <div className="relative flex-1 bg-white p-6 flex flex-col gap-3">
-            {/* 별점 */}
-            <StarRating value={4} />
-
-            {/* 제목/헤더 */}
+            {/* 상단 헤더: 아이콘만 (박스 밖) */}
+            <div className="flex items-center">
+              <img src={PEPPER_ICON} alt="맵기 아이콘" className="block size-[22px]" />
+            </div>
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-2">
                 <p className="text-[#1f2024] text-[0px] tracking-[0.09px]">
@@ -159,8 +176,7 @@ export default function AnalysisResultPage() {
                   <span className="text-[12px] font-bold">[kimcʰic'ige]</span>
                 </p>
                 <p className="text-[#1f2024] text-[12px] font-bold">당신이 좋아하는 음식과 비슷해요</p>
-                {/* 태그들 */}
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Chip label="순두부찌개" tone="orange" />
                   <Chip label="돼지고기" active tone="orange" />
                   <Chip label="두부" tone="orange" />
@@ -168,9 +184,9 @@ export default function AnalysisResultPage() {
                   <Chip label="파" tone="orange" />
                 </div>
               </div>
-              {/* 하트/플레이 아이콘 영역 (간단 대체) */}
+              {/* 오른쪽 아이콘 영역: 동그라미 -> 하트 아이콘으로 교체 */}
               <div className="flex items-center gap-3 mt-1">
-                <div className="size-5 rounded-full border border-[#2f3036]" aria-hidden />
+                <HeartIcon size={20} color="#2f3036" />
                 <div className="size-[11px]" aria-hidden>
                   <svg viewBox="0 0 24 24" width="11" height="11">
                     <path d="M8 5v14l11-7z" fill="#e86339" />
@@ -179,79 +195,71 @@ export default function AnalysisResultPage() {
               </div>
             </div>
 
-            {/* 맛 분석 리포트 */}
-            <div className="mt-4">
-              <p className="text-[12px] font-bold text-[#1f2024] mb-2">맛 분석 리포트</p>
-              <div className="w-[298px] h-[298px] overflow-hidden">
-                <RadarChart />
+            {/* 라이트 박스: 맛 분석 리포트 ~ 유사 맛 음식 */}
+            <div className="rounded-[16px] bg-[#eaf2ff] p-4">
+              <div className="flex flex-col gap-4">
+                {/* 맛 분석 리포트 */}
+                <div>
+                  <p className="text-[12px] font-bold text-[#1f2024] mb-2">맛 분석 리포트</p>
+                  <div className="w-[298px] h-[298px] overflow-hidden"><RadarChart /></div>
+                </div>
+
+                {/* 음식 소개 */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-[12px] font-bold text-[#1f2024]">음식 소개</p>
+                  <p className="text-[12px] leading-4 text-[#71727a] w-[305px] tracking-[0.12px]">김치찌개는 잘 익은 김치와 돼지고기 또는 두부, 양파, 파 등을 넣고 얼큰하게 끓여낸 한국의 대표적인 찌개 요리입니다. 한국인들이 가장 선호하는 음식 중 하나로, 만드는 재료와 방법에 따라 다양한 맛을 낼 수 있습니다.</p>
+                </div>
+
+                {/* 매칭 정도 */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-[12px] font-bold text-[#1f2024]">음식 매칭 정도</p>
+                  <ProgressBar percent={75} />
+                  <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">당신은 이 음식을 반드시 좋아해야합니다. 그래야 이 AI가 우쭐고 저쭐고 매칭될거예요. 너 김치 좋아하잖아. 그니까 김치찌개도 좋아 하겠지!</p>
+                </div>
+
+                {/* 들어간 재료 */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-[12px] font-bold text-[#1f2024]">들어간 재료</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Chip label="김치" tone="blue" />
+                    <Chip label="돼지고기" active />
+                    <Chip label="두부" tone="blue" />
+                    <Chip label="양파" tone="blue" />
+                    <Chip label="파" tone="blue" />
+                  </div>
+                </div>
+
+                {/* 기타 설명 섹션들 */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-[12px] font-bold text-[#1f2024]">식감 특징</p>
+                  <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">바삭함, 부드러움, 탱글함, 밀도감 등</p>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <p className="text-[12px] font-bold text-[#1f2024]">우리나라 음식과 비슷한 음식</p>
+                  <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">바삭함, 부드러움, 탱글함, 밀도감 등</p>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <p className="text-[12px] font-bold text-[#1f2024]">유사 맛 음식</p>
+                  <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">“비슷한 맛으로는 인절미, 단팥죽이 있습니다.”</p>
+                </div>
               </div>
             </div>
 
-            {/* 음식 소개 */}
-            <div className="mt-4 flex flex-col gap-2">
-              <p className="text-[12px] font-bold text-[#1f2024]">음식 소개</p>
-              <p className="text-[12px] leading-4 text-[#71727a] w-[305px] tracking-[0.12px]">
-                김치찌개는 잘 익은 김치와 돼지고기 또는 두부, 양파, 파 등을 넣고 얼큰하게 끓여낸 한국의 대표적인 찌개 요리입니다.
-                한국인들이 가장 선호하는 음식 중 하나로, 만드는 재료와 방법에 따라 다양한 맛을 낼 수 있습니다.
-              </p>
-            </div>
-
-            {/* 매칭 정도 */}
-            <div className="mt-6 flex flex-col gap-2">
-              <p className="text-[12px] font-bold text-[#1f2024]">음식 매칭 정도</p>
-              <ProgressBar percent={75} />
-              <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">
-                당신은 이 음식을 반드시 좋아해야합니다. 그래야 이 AI가 우쭐고 저쭐고 매칭될거예요. 너 김치 좋아하잖아.
-                그니까 김치찌개도 좋아 하겠지!
-              </p>
-            </div>
-
-            {/* 들어간 재료 */}
-            <div className="mt-6 flex flex-col gap-2">
-              <p className="text-[12px] font-bold text-[#1f2024]">들어간 재료</p>
-              <div className="flex items-center gap-2">
-                <Chip label="김치" tone="blue" />
-                <Chip label="돼지고기" active />
-                <Chip label="두부" tone="blue" />
-                <Chip label="양파" tone="blue" />
-                <Chip label="파" tone="blue" />
-              </div>
-            </div>
-
-            {/* 기타 설명 섹션들 */}
-            <div className="mt-6 flex flex-col gap-2">
-              <p className="text-[12px] font-bold text-[#1f2024]">식감 특징</p>
-              <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">바삭함, 부드러움, 탱글함, 밀도감 등</p>
-            </div>
-
-            <div className="mt-4 flex flex-col gap-2">
-              <p className="text-[12px] font-bold text-[#1f2024]">우리나라 음식과 비슷한 음식</p>
-              <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">바삭함, 부드러움, 탱글함, 밀도감 등</p>
-            </div>
-
-            <div className="mt-4 flex flex-col gap-2">
-              <p className="text-[12px] font-bold text-[#1f2024]">유사 맛 음식</p>
-              <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">“비슷한 맛으로는 인절미, 단팥죽이 있습니다.”</p>
-            </div>
-
-            {/* 자국 리뷰 카드 */}
-            <div className="mt-6 bg-[#ffe1d0] p-4 rounded-[16px] w-[327px]">
+            {/* 자국 리뷰 카드 (박스 밖) */}
+            <div className="mt-4 bg-[#ffe1d0] p-4 rounded-[16px] w-[327px]">
               <div className="bg-white rounded-[16px] p-4 relative">
                 <div className="flex items-start gap-3">
                   <div className="size-[35px] rounded-full bg-[#ddd]" />
                   <div className="flex-1">
                     <p className="text-[12px] font-bold text-black leading-none">tlswo2025</p>
                     <StarRating value={4} />
-                    <p className="mt-2 text-[12px] text-black">
-                      생각보다 맵지 않고 맛있어요.
-                      <br />그런데 저한텐 조금 짠 편이었습니다.
-                    </p>
+                    <p className="mt-2 text-[12px] text-black">생각보다 맵지 않고 맛있어요.<br />그런데 저한텐 조금 짠 편이었습니다.</p>
                   </div>
                 </div>
                 <div className="absolute right-4 bottom-3 flex items-center gap-1 text-[10px]">
-                  <svg viewBox="0 0 24 24" width="10" height="10" aria-hidden>
-                    <path d="M8 5v14l11-7z" fill="#e86339" />
-                  </svg>
+                  <svg viewBox="0 0 24 24" width="10" height="10" aria-hidden><path d="M8 5v14l11-7z" fill="#e86339" /></svg>
                   <span>더보기</span>
                 </div>
               </div>
