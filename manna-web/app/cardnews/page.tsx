@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // Figma Dev Mode에서 제공된 원격 자산 URL들
@@ -110,6 +110,52 @@ export default function CardNewsPage() {
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const galleryInputRef = useRef<HTMLInputElement | null>(null);
 
+  // 업로드 프리뷰 및 분석 로딩 상태
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const analysisTimerRef = useRef<number | null>(null);
+  const progressTimerRef = useRef<number | null>(null);
+
+  const startAnalysis = (file: File) => {
+    // 프리뷰 생성
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    setScanSheetOpen(false);
+
+    // 진행률 애니메이션 시작
+    setIsAnalyzing(true);
+    setProgress(0);
+
+    // progress를 자연스럽게 증가
+    progressTimerRef.current = window.setInterval(() => {
+      setProgress((p) => {
+        if (p >= 95) return p; // 마지막 구간은 완료 타이밍에 맞춰 채움
+        const step = Math.floor(Math.random() * 8) + 3; // 3~10%
+        return Math.min(95, p + step);
+      });
+    }, 180);
+
+    // 분석 완료 시점 (약 2.4초 후)
+    analysisTimerRef.current = window.setTimeout(() => {
+      // 마무리
+      setProgress(100);
+      setIsAnalyzing(false);
+      // 프리뷰 정리
+      URL.revokeObjectURL(url);
+      // 다음 페이지로 이동 (가정: 홈으로 이동). 필요 시 목적지 수정 가능
+      router.push("/home");
+    }, 2400);
+  };
+
+  useEffect(() => {
+    // 언마운트/재시작 시 타이머 정리
+    return () => {
+      if (progressTimerRef.current) window.clearInterval(progressTimerRef.current);
+      if (analysisTimerRef.current) window.clearTimeout(analysisTimerRef.current);
+    };
+  }, []);
+
   const handleTabClick = (label: string) => {
     if (label === "홈") router.push("/main");
     if (label === "카드뉴스") router.push("/cardnews");
@@ -126,9 +172,8 @@ export default function CardNewsPage() {
   const handleFileSelected = (files: FileList | null) => {
     if (!files || files.length === 0) return;
     const file = files[0];
-    // 현재는 선택만 처리하고 시트 닫기. 추후 분석/미리보기/라우팅 추가 가능
-    console.log("selected file:", file.name, file.type, file.size);
-    setScanSheetOpen(false);
+    // 분석 시나리오 시작
+    startAnalysis(file);
   };
 
   return (
@@ -260,6 +305,34 @@ export default function CardNewsPage() {
               >
                 취소
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* 업로드 후 로딩 오버레이 (Figma 1716-2669 유사) */}
+        {previewUrl && isAnalyzing && (
+          <div className="absolute inset-0 z-40">
+            {/* 배경 이미지 + 블러 */}
+            <div className="absolute inset-0">
+              <img src={previewUrl} alt="업로드 미리보기" className="w-full h-full object-cover blur-md scale-105" />
+              <div className="absolute inset-0 bg-black/30" />
+            </div>
+            {/* 중앙 로딩 카드 */}
+            <div className="absolute inset-0 flex items-center justify-center p-6">
+              <div className="w-full max-w-[300px] rounded-2xl bg-white/90 shadow-lg backdrop-blur-md p-6 text-center">
+                <div className="mx-auto mb-4 relative w-14 h-14">
+                  <div className="absolute inset-0 rounded-full border-4 border-[#EDEEF2]" />
+                  <div className="absolute inset-0 rounded-full border-4 border-t-[#E86339] border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                </div>
+                <p className="text-sm font-semibold text-[#1f2024] mb-1">분석 중...</p>
+                <p className="text-xs text-[#71727a]">사진을 분석하고 있어요</p>
+                <div className="mt-4">
+                  <div className="w-full h-2 bg-[#F0F1F3] rounded-full overflow-hidden">
+                    <div className="h-full bg-[#E86339] transition-[width] duration-200 ease-out" style={{ width: `${progress}%` }} />
+                  </div>
+                  <p className="mt-2 text-xs text-[#8f9098]">{progress}%</p>
+                </div>
+              </div>
             </div>
           </div>
         )}
