@@ -1,23 +1,7 @@
 "use client";
 
 import Image from "next/image";
-
-function StatusBar() {
-  return (
-    <div className="absolute left-0 right-0 top-0 h-[44px] bg-white flex items-center justify-between px-4">
-      <div className="flex items-center gap-2">
-        <div className="size-5 rounded-full bg-[#2f3036] flex items-center justify-center text-white text-[10px]" aria-label="close">
-          ×
-        </div>
-      </div>
-      <div className="text-[#1f2024] text-[15px] -ml-8">9:41</div>
-      <div className="flex items-center gap-2 text-[#1f2024] text-[14px]">
-        <span>신호</span>
-        <span>배터리</span>
-      </div>
-    </div>
-  );
-}
+import { useRouter } from "next/navigation";
 
 function Star({ filled = false }: { filled?: boolean }) {
   return (
@@ -128,15 +112,26 @@ function RadarChart() {
 
 export default function AnalysisResultPage() {
   const photoSrc = "/assets/main/cardNews/IMG_1.jpg";
+  const router = useRouter();
 
   return (
     <div className="min-h-screen w-full bg-[#f8f9fe] flex items-start justify-center py-10">
       {/* 모바일 뷰포트 */}
       <div className="relative w-[375px] h-[1586px] bg-[#eaf2ff] overflow-hidden">
-        <StatusBar />
+        {/* 큰 X 버튼 (StatusBar 제거, 좌측 상단 고정) */}
+        <div className="absolute left-4 top-4 z-10">
+          <button
+            type="button"
+            aria-label="close"
+            onClick={() => router.push("/main")}
+            className="flex size-10 items-center justify-center rounded-full bg-white shadow-md text-[#2f3036] text-[20px] leading-none cursor-pointer active:scale-[0.98]"
+          >
+            ×
+          </button>
+        </div>
 
-        {/* 스크롤 컨텐츠 */}
-        <div className="absolute inset-0 top-[44px] flex flex-col">
+        {/* 스크롤 컨텐츠 (상단 오프셋 제거) */}
+        <div className="absolute inset-0 flex flex-col">
           {/* 상단 사진 */}
           <div className="relative h-[326px] w-full">
             <div className="absolute left-[-15px] top-[39px] h-[292px] w-[390px] overflow-hidden">
