@@ -5,12 +5,12 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 
 // Figma Dev Mode에서 제공된 원격 자산 URL들
-const IMG_0 = "http://localhost:3845/assets/e5f7a4f3aea45c2fe9ef0dde35e2f655bbb31fde.png";
-const IMG_1 = "http://localhost:3845/assets/0e4b2783b89814d7211de2ab6b4dcbbed764c74a.png";
-const IMG_2 = "http://localhost:3845/assets/0a2d598227c3dbb46badecd19f21c22408ba3872.png";
-const IMG_3 = "http://localhost:3845/assets/f1e46c0e7e0a292009e96ac98f5749754783b935.png";
-const IMG_4 = "http://localhost:3845/assets/22762110bc28e4b65e268856cde32dccebcd5dfc.png";
-const IMG_5 = "http://localhost:3845/assets/afb5649b5b0300513903deb3ffe8fb3f14962e3e.png";
+const IMG_0 = "/assets/main/cardNews/IMG_0.png";
+const IMG_1 = "/assets/main/cardNews/IMG_1.jpg";
+const IMG_2 = "/assets/main/cardNews/IMG_2.jpg";
+const IMG_3 = "/assets/main/cardNews/IMG_3.jpg";
+const IMG_4 = "/assets/main/cardNews/IMG_4.jpg";
+const IMG_5 = "/assets/main/cardNews/IMG_5.jpg";
 // 아이콘(mask) 자산
 const ICON_FILTER = "http://localhost:3845/assets/253ec4b055a758c6843164f6d892de0485c3c54e.svg"; // filter icon (chip)
 const ICON_CHEVRON_DOWN = "http://localhost:3845/assets/1f9380475efa3247311548d62ca7fe3e9c0b3eca.svg"; // tiny chevron down
