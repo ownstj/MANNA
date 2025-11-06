@@ -1,148 +1,269 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-// 간단 마스크 아이콘 유틸 (cardnews 페이지와 동일 스타일)
-function MaskIcon({ src, size = 20, color = "#D4D6DD", className = "" }: { src: string; size?: number; color?: string; className?: string }) {
+function StatusBar() {
   return (
-    <span
-      aria-hidden
-      className={className}
-      style={{
-        width: size,
-        height: size,
-        display: "inline-block",
-        backgroundColor: color,
-        WebkitMaskImage: `url('${src}')`,
-        maskImage: `url('${src}')`,
-        WebkitMaskRepeat: "no-repeat",
-        maskRepeat: "no-repeat",
-        WebkitMaskSize: "contain",
-        maskSize: "contain",
-        WebkitMaskPosition: "center",
-        maskPosition: "center",
-      }}
-    />
-  );
-}
-
-const ICONS = {
-  home: "/assets/icons/home.svg",
-  card: "/assets/icons/card.svg",
-  scan: "/assets/icons/scan.svg",
-  challenge: "/assets/icons/challenge.svg",
-  profile: "/assets/icons/profile.svg",
-  back: "http://localhost:3845/assets/7843c96e9d2f6877d77cee31393aecfb5a416fc8.svg",
-} as const;
-
-export default function AnalysisResultPage() {
-  const router = useRouter();
-
-  const handleTabClick = (label: string) => {
-    if (label === "홈") router.push("/main");
-    if (label === "카드뉴스") router.push("/cardnews");
-    if (label === "챌린지") router.push("/challenge");
-    // 스캔은 바텀시트를 카드뉴스에서 처리하므로 여기서는 카드뉴스로 유도
-    if (label === "스캔") router.push("/cardnews");
-  };
-
-  return (
-    <div className="min-h-screen w-full bg-white flex items-center justify-center">
-      <div className="relative h-[812px] w-[375px] bg-white text-[#1f2024] md:rounded-2xl md:shadow-md overflow-hidden" data-name="Scan Result">
-        {/* 헤더 - 상단 고정 */}
-        <div className="h-[44px] bg-white sticky top-0 z-10">
-          <p className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-[14px] font-bold">분석 결과</p>
-          <Link href="/cardnews" aria-label="뒤로" className="absolute left-[16px] top-1/2 -translate-y-1/2 size-6 flex items-center justify-center">
-            <MaskIcon src={ICONS.back} size={20} color="#E86339" />
-          </Link>
+    <div className="absolute left-0 right-0 top-0 h-[44px] bg-white flex items-center justify-between px-4">
+      <div className="flex items-center gap-2">
+        <div className="size-5 rounded-full bg-[#2f3036] flex items-center justify-center text-white text-[10px]" aria-label="close">
+          ×
         </div>
-
-        {/* 콘텐츠 */}
-        <div className="h-full overflow-auto pb-[120px]">
-          {/* 상단 썸네일/배너 영역 */}
-          <div className="relative w-full h-[220px] bg-[#E9F2FF]">
-            {/* 업로드 이미지가 있다면 쿼리/상태로 치환 가능. 현재는 플레이스홀더 박스 */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-[#3b82f6] text-[12px]">분석된 이미지 영역</p>
-            </div>
-          </div>
-
-          {/* 본문 카드들 */}
-          <div className="px-16 py-6 space-y-6">
-            {/* 요약 카드 */}
-            <div className="rounded-2xl border border-[#E0E2E7] p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-[12px] font-semibold text-[#71727a]">스캔 요약</p>
-                <span className="text-[10px] text-[#8f9098]">7/10 적합</span>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[16px] font-bold">분석된 제품명(예시)</p>
-                <p className="text-[12px] text-[#71727a]">카테고리 • 브랜드 • 기타</p>
-              </div>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {["비건", "돼지고기 미포함", "난류 포함"].map((chip) => (
-                  <span key={chip} className="px-2 h-6 rounded-full bg-[#f5f6fa] text-[10px] text-[#3b3b44] inline-flex items-center">
-                    {chip}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* 상세 정보 */}
-            <div className="rounded-2xl border border-[#E0E2E7] p-4 space-y-4">
-              <p className="text-[12px] font-semibold text-[#71727a]">상세 정보</p>
-              <div className="grid grid-cols-2 gap-3 text-[12px]">
-                <div className="space-y-1">
-                  <p className="text-[#8f9098]">칼로리</p>
-                  <p className="font-semibold text-[#1f2024]">240 kcal</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[#8f9098]">당류</p>
-                  <p className="font-semibold text-[#1f2024]">18 g</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[#8f9098]">단백질</p>
-                  <p className="font-semibold text-[#1f2024]">6 g</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[#8f9098]">지방</p>
-                  <p className="font-semibold text-[#1f2024]">9 g</p>
-                </div>
-              </div>
-            </div>
-
-            {/* 액션 버튼들 */}
-            <div className="grid grid-cols-2 gap-3">
-              <button type="button" onClick={() => router.push("/cardnews")} className="h-11 rounded-xl border border-[#E0E2E7] text-[12px] font-semibold">다시 스캔</button>
-              <button type="button" className="h-11 rounded-xl bg-[#E86339] text-white text-[12px] font-semibold">공유하기</button>
-            </div>
-          </div>
-        </div>
-
-        {/* 하단 탭 바 */}
-        <div className="absolute left-0 right-0 bottom-0 h-[88px] px-4 pt-4 pb-8 bg-white flex gap-1">
-          {[
-            { label: "홈", icon: ICONS.home, active: false },
-            { label: "카드뉴스", icon: ICONS.card, active: false },
-            { label: "스캔", icon: ICONS.scan, active: false },
-            { label: "챌린지", icon: ICONS.challenge, active: false },
-            { label: "내 프로필", icon: ICONS.profile, active: false },
-          ].map((t) => (
-            <button
-              key={t.label}
-              type="button"
-              onClick={() => handleTabClick(t.label)}
-              className="flex-1 flex flex-col items-center gap-2"
-              aria-pressed={t.active}
-            >
-              <MaskIcon src={t.icon} color={t.active ? "#E86339" : "#D4D6DD"} size={20} />
-              <p className={`${t.active ? "text-[#1f2024] font-semibold" : "text-[#71727a]"} text-[10px] leading-[14px]`}>{t.label}</p>
-            </button>
-          ))}
-        </div>
+      </div>
+      <div className="text-[#1f2024] text-[15px] -ml-8">9:41</div>
+      <div className="flex items-center gap-2 text-[#1f2024] text-[14px]">
+        <span>신호</span>
+        <span>배터리</span>
       </div>
     </div>
   );
 }
 
+function Star({ filled = false }: { filled?: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
+      <path
+        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+        fill={filled ? "#e86339" : "none"}
+        stroke={filled ? "#e86339" : "#d4d6dd"}
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
+function StarRating({ value = 4 }: { value?: number }) {
+  return (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star key={i} filled={i < value} />
+      ))}
+    </div>
+  );
+}
+
+function ProgressBar({ percent = 75 }: { percent?: number }) {
+  return (
+    <div className="h-2 w-[300px] rounded bg-[#e8e9f1] overflow-hidden">
+      <div className="h-full rounded bg-[#ff616d]" style={{ width: `${percent}%` }} />
+    </div>
+  );
+}
+
+function Chip({ label, active, tone = "orange" }: { label: string; active?: boolean; tone?: "orange" | "blue" }) {
+  const activeBg = tone === "orange" ? "#e86339" : "#3b82f6";
+  const inactiveBg = tone === "orange" ? "#feebeb" : "#eaf2ff";
+  const activeText = "#ffffff";
+  const inactiveText = tone === "orange" ? "#e86339" : "#1f2024";
+  return (
+    <span
+      className="px-2.5 py-1.5 rounded-[12px] text-[10px] font-semibold uppercase tracking-[0.5px]"
+      style={{ backgroundColor: active ? activeBg : inactiveBg, color: active ? activeText : inactiveText }}
+    >
+      {label}
+    </span>
+  );
+}
+
+function RadarChart() {
+  // 정적 6축 레이더 차트 (시각 유사 재현)
+  const size = 298;
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = 120;
+  const spokes = 6;
+  const rings = 5;
+  const labels = ["짠맛", "신맛", "쓴맛", "매운맛", "느끼한맛", "단맛"];
+  const labelPos = [
+    { x: cx, y: 14, align: "middle" }, // 짠맛(상)
+    { x: size - 12, y: cy - 10, align: "end" }, // 신맛(우상)
+    { x: size - 12, y: cy + 100, align: "end" }, // 쓴맛(우하)
+    { x: cx, y: size - 8, align: "middle" }, // 매운맛(하)
+    { x: 12, y: cy + 100, align: "start" }, // 느끼한맛(좌하)
+    { x: 12, y: cy - 10, align: "start" }, // 단맛(좌상)
+  ] as const;
+
+  // 폴리곤 값(0~1) 임의 예시: 단맛 0.4, 짠맛 0.7, 신맛 0.55, 쓴맛 0.35, 매운맛 0.8, 느끼한맛 0.3
+  const values = [0.7, 0.55, 0.35, 0.8, 0.3, 0.4];
+
+  const points = values.map((val, i) => {
+    const angle = (-Math.PI / 2) + (i * (2 * Math.PI / spokes));
+    const rr = r * val;
+    return [cx + rr * Math.cos(angle), cy + rr * Math.sin(angle)];
+  });
+
+  const pointsAttr = points.map(([x, y]) => `${x},${y}`).join(" ");
+
+  return (
+    <svg width={size} height={size} className="bg-white">
+      {/* 눈금 원 */}
+      {[...Array(rings)].map((_, i) => (
+        <circle key={i} cx={cx} cy={cy} r={r * ((i + 1) / rings)} fill="none" stroke="#e8e9f1" strokeWidth="1" />
+      ))}
+      {/* 스포크 라인 */}
+      {[...Array(spokes)].map((_, i) => {
+        const angle = (-Math.PI / 2) + (i * (2 * Math.PI / spokes));
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="#e8e9f1" strokeWidth="1" />;
+      })}
+      {/* 데이터 폴리곤 */}
+      <polygon points={pointsAttr} fill="#e86339" fillOpacity="0.2" stroke="#e86339" strokeWidth="2" />
+      {/* 축 라벨 */}
+      {labels.map((label, i) => (
+        <text
+          key={label}
+          x={labelPos[i].x}
+          y={labelPos[i].y}
+          textAnchor={labelPos[i].align as any}
+          fontSize={12}
+          fill="#1f2024"
+        >
+          {label}
+        </text>
+      ))}
+    </svg>
+  );
+}
+
+export default function AnalysisResultPage() {
+  const photoSrc = "/assets/main/cardNews/IMG_1.jpg";
+
+  return (
+    <div className="min-h-screen w-full bg-[#f8f9fe] flex items-start justify-center py-10">
+      {/* 모바일 뷰포트 */}
+      <div className="relative w-[375px] h-[1586px] bg-[#eaf2ff] overflow-hidden">
+        <StatusBar />
+
+        {/* 스크롤 컨텐츠 */}
+        <div className="absolute inset-0 top-[44px] flex flex-col">
+          {/* 상단 사진 */}
+          <div className="relative h-[326px] w-full">
+            <div className="absolute left-[-15px] top-[39px] h-[292px] w-[390px] overflow-hidden">
+              <Image
+                src={photoSrc}
+                alt="uploaded photo"
+                fill
+                sizes="390px"
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* 상세 영역 */}
+          <div className="relative flex-1 bg-white p-6 flex flex-col gap-3">
+            {/* 별점 */}
+            <StarRating value={4} />
+
+            {/* 제목/헤더 */}
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col gap-2">
+                <p className="text-[#1f2024] text-[0px] tracking-[0.09px]">
+                  <span className="text-[18px] font-extrabold">김치찌개 </span>
+                  <span className="text-[12px] font-bold">[kimcʰic'ige]</span>
+                </p>
+                <p className="text-[#1f2024] text-[12px] font-bold">당신이 좋아하는 음식과 비슷해요</p>
+                {/* 태그들 */}
+                <div className="flex items-center gap-2">
+                  <Chip label="순두부찌개" tone="orange" />
+                  <Chip label="돼지고기" active tone="orange" />
+                  <Chip label="두부" tone="orange" />
+                  <Chip label="양파" tone="orange" />
+                  <Chip label="파" tone="orange" />
+                </div>
+              </div>
+              {/* 하트/플레이 아이콘 영역 (간단 대체) */}
+              <div className="flex items-center gap-3 mt-1">
+                <div className="size-5 rounded-full border border-[#2f3036]" aria-hidden />
+                <div className="size-[11px]" aria-hidden>
+                  <svg viewBox="0 0 24 24" width="11" height="11">
+                    <path d="M8 5v14l11-7z" fill="#e86339" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* 맛 분석 리포트 */}
+            <div className="mt-4">
+              <p className="text-[12px] font-bold text-[#1f2024] mb-2">맛 분석 리포트</p>
+              <div className="w-[298px] h-[298px] overflow-hidden">
+                <RadarChart />
+              </div>
+            </div>
+
+            {/* 음식 소개 */}
+            <div className="mt-4 flex flex-col gap-2">
+              <p className="text-[12px] font-bold text-[#1f2024]">음식 소개</p>
+              <p className="text-[12px] leading-4 text-[#71727a] w-[305px] tracking-[0.12px]">
+                김치찌개는 잘 익은 김치와 돼지고기 또는 두부, 양파, 파 등을 넣고 얼큰하게 끓여낸 한국의 대표적인 찌개 요리입니다.
+                한국인들이 가장 선호하는 음식 중 하나로, 만드는 재료와 방법에 따라 다양한 맛을 낼 수 있습니다.
+              </p>
+            </div>
+
+            {/* 매칭 정도 */}
+            <div className="mt-6 flex flex-col gap-2">
+              <p className="text-[12px] font-bold text-[#1f2024]">음식 매칭 정도</p>
+              <ProgressBar percent={75} />
+              <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">
+                당신은 이 음식을 반드시 좋아해야합니다. 그래야 이 AI가 우쭐고 저쭐고 매칭될거예요. 너 김치 좋아하잖아.
+                그니까 김치찌개도 좋아 하겠지!
+              </p>
+            </div>
+
+            {/* 들어간 재료 */}
+            <div className="mt-6 flex flex-col gap-2">
+              <p className="text-[12px] font-bold text-[#1f2024]">들어간 재료</p>
+              <div className="flex items-center gap-2">
+                <Chip label="김치" tone="blue" />
+                <Chip label="돼지고기" active />
+                <Chip label="두부" tone="blue" />
+                <Chip label="양파" tone="blue" />
+                <Chip label="파" tone="blue" />
+              </div>
+            </div>
+
+            {/* 기타 설명 섹션들 */}
+            <div className="mt-6 flex flex-col gap-2">
+              <p className="text-[12px] font-bold text-[#1f2024]">식감 특징</p>
+              <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">바삭함, 부드러움, 탱글함, 밀도감 등</p>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-2">
+              <p className="text-[12px] font-bold text-[#1f2024]">우리나라 음식과 비슷한 음식</p>
+              <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">바삭함, 부드러움, 탱글함, 밀도감 등</p>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-2">
+              <p className="text-[12px] font-bold text-[#1f2024]">유사 맛 음식</p>
+              <p className="text-[12px] leading-4 text-[#71727a] w-[305px]">“비슷한 맛으로는 인절미, 단팥죽이 있습니다.”</p>
+            </div>
+
+            {/* 자국 리뷰 카드 */}
+            <div className="mt-6 bg-[#ffe1d0] p-4 rounded-[16px] w-[327px]">
+              <div className="bg-white rounded-[16px] p-4 relative">
+                <div className="flex items-start gap-3">
+                  <div className="size-[35px] rounded-full bg-[#ddd]" />
+                  <div className="flex-1">
+                    <p className="text-[12px] font-bold text-black leading-none">tlswo2025</p>
+                    <StarRating value={4} />
+                    <p className="mt-2 text-[12px] text-black">
+                      생각보다 맵지 않고 맛있어요.
+                      <br />그런데 저한텐 조금 짠 편이었습니다.
+                    </p>
+                  </div>
+                </div>
+                <div className="absolute right-4 bottom-3 flex items-center gap-1 text-[10px]">
+                  <svg viewBox="0 0 24 24" width="10" height="10" aria-hidden>
+                    <path d="M8 5v14l11-7z" fill="#e86339" />
+                  </svg>
+                  <span>더보기</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
